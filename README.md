@@ -8,7 +8,7 @@ Django Demo to showcase skills
 
 # Prerequisites
 - pyenv
-  - Version: 3.10.0rc1
+  - Version: `3.11.13`
 - virtualenv
 
 # Setup
