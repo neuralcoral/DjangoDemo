@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
 class Streamer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -16,3 +17,10 @@ class LiveStreamEvent(models.Model):
 
     def __str__(self):
         return self.title
+
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    is_streamer = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.username}'s profile"
