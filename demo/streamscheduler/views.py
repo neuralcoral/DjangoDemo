@@ -1,9 +1,10 @@
 from django.http import Http404
 from django.shortcuts import render, redirect
-from .models import LiveStreamEvent, Profile
+from .models import LiveStreamEvent, Profile, Streamer
 from .forms import LiveStreamEventForm, CustomUserCreationForm, StreamerLoginForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+import logging
 
 EVENTS = {
     1: {'title': 'Test Event', 'description': 'This is a test event', 'streamer': 'Streamer Name', 'scheduled_time': '2023-11-06 20:00:00'},
@@ -26,11 +27,21 @@ def schedule_list(request):
     events = LiveStreamEvent.objects.all().order_by('scheduled_time')
     return render(request, 'schedule_list.html', {'events': events})
 
+@login_required
 def create_event(request):
+    try:
+        logging.log(logging.DEBUG, "Checking if streamer...")
+        streamer_profile = Streamer.objects.get(user=request.user)
+    except Streamer.DoesNotExist:
+        logging.error(logging.ERROR, f"Failed for user = {request.user}")
+        return redirect('home')
+    
     if request.method == 'POST':
         form = LiveStreamEventForm(request.POST)
         if form.is_valid():
-            form.save()
+            event = form.save(commit=False)
+            event.streamer = streamer_profile
+            event.save()
             return redirect('schedule_list')
     else:
         form = LiveStreamEventForm()

@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 class Streamer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     display_name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -23,4 +23,4 @@ class Profile(models.Model):
     is_streamer = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.user.username}'s profile"
+        return f"{self.user.username}'s ({self.user.is_streamer}) profile"
